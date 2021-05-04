@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="container" align="center">
+    <form class="border border-dark rounded mt-3" action="" method="POST" style="width: 80%" novalidate>
+      {{ form.hidden_tag() }}
+      <fieldset>
+        <legend>Query the Database</legend>
+        <div class="row g-0">
+          <div class="col-auto mx-auto mb-3">
+            {{ form.raw_query.label(class="form-label") }}
+            {{ form.raw_query(class="form-control form-control-lg", rows=5, cols=100, placeholder='Type or paste query here', style="width: 90%;font-family:monospace;") }}
+            <div class="invalid-feedback">
+              {{ form.raw_query.errors[0]|safe }}
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      {{ form.submit(class="btn btn-secondary mb-3 mt-3") }}
+    </form>
+  </div>
+  <div class="container text-center mt-3">
+    <p>Please note that not all types of queries are possible using this page. This tool is meant to replicate queries already preformed on this site.</p>
+    <p>See consult META file in any downloaded results you have to find the SQLite query associated with said results.</p>
+    <p>Query's are limited to the <b><code>SELECT _ FROM _ WHERE _ ORDER BY _ ASC/DESC (NULLS LAST/FIRST) LIMIT _ OFFSET _;</code></b> syntax. This can be found in the meta file of any results that have been downloaded, or shown using the "Display Query" option with queries.</p>
+  </div>
+  <script type="text/javascript">
+    var errors = {{ form.errors|tojson }};
+  </script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/utils.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/query_raw.js') }}"></script>
+{% endblock content %}

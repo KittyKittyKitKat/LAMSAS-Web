@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="container-fluid text-center mt-3">
+  	<div class="row">
+  		<div class="col-xs-4">
+  			<img src="{{ url_for('static', filename='logos/LAPlogo.png') }}" alt="LAP Logo" height="250" width="360">
+  		</div>
+  		<div class="col-xs-8 mt-5 w-auto">
+  			<h2>Welcome to the LAMSAS Query Web App</h2>
+        <p>
+          This is an application currently under development for the purpose of searching the vast amounts of data contained within the Linguistic Atlas Project (LAP).
+          The LAP serves to catalogue the dialect of American English by region.
+          More information on the project itself can be found at the <b><a href="http://www.lap.uga.edu/" target="_blank" rel="noopener">project's website</a></b>.
+          Currently, this site uses data from a subset of the LAP, the Linguistic Atlas of the Middle and South Atlantic States (LAMSAS), to query and display information.
+          This site is being developed by Simon Harris-Palmer under the mentorship of Dr. Jerzy Jaromczyk of the University of Kentucky as part of a Capstone Research Project.
+          At the moment, this site runs on Python 3.9.1, using Flask for web application interfacing and SQLite for data storage and querying.
+          Thanks to Dr. Allison P. Burkette for providing the opportunity to work with the LAP's data for the purposes of this project.
+        </p>
+  		</div>
+  	</div>
+  </div>
+{% endblock content %}

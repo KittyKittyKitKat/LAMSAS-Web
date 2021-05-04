@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="" class="nav-link">Simple Features</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Data Table</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Columns from Data Table</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Order With</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Distinct Results</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Limit Results To</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Advanced Features</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Empty Values Last</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Offset Results By</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Data Sorting Condition</a>
+            </li>
+            <li class="nav-item">
+              <a href="" class="nav-link">Display Query as SQLite</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="container">
+    <h1 class="mt-3 mb-3">LAMSAS Query Help</h1>
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <h2>Simple Features</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <h3>Data Table</h3>
+        <p>This dropdown menu is used to select one of the two tables, Informants or Responses, currently within the database to draw data from. (Required)</p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <h3>Columns from Data Table</h3>
+        <p>This selection dialogue is used to choose the columns you wish to retrieve based on the data table you chose. You can select more than one column to query by holding Control and clicking on multiple columns. (Required)</p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <h3>Order With</h3>
+        <p>This dropdown menu is used to order results by the values in a column queried.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <h3>Distinct Results</h3>
+        <p>Check this checkbox in order to return only unique data. This takes into account all the columns requested in the query.</p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <h3>Limit Results To</h3>
+        <p>Limit the number of results returned by the query.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <h2>Advanced Features</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <h3>Empty Values Last</h3>
+        <p>When a column is specified in the Order With dropdown, this will make entires with no data appear last in the results.</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <h3>Offset Results By</h3>
+        <p>Offset the returned queries. This requires a limit to be specified. (For example, a limit of 10 would return results 1-10, whereas a limit of 10 and an offset of 2 would return results 3-12.)</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <h3>Data Sorting Condition</h3>
+        <p>These 3 fields are used to sort the data returned by the query. The leftmost field allows a column to be chosen from the previously selected columns. The center field contains conditions to test the values of the column with, and the rightmost allows you to enter in the specific value to test against. (For example, ColumnA | Is Equal to | Value would only return results where the value in ColumnA is equal to the specified Value.)</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <h3>Display Query as SQLite</h3>
+        <p>Display the query in SQLite syntax.</p>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
