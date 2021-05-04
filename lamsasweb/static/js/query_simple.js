@@ -1,6 +1,6 @@
 var tables = document.querySelector("#tables"),
     columns = document.querySelector("#columns"),
-    order_by = document.querySelector("#order_by"),
+    orderBy = document.querySelector("#orderBy"),
     distinct = document.querySelector("#distinct"),
     limit = document.querySelector("#limit");
 
@@ -8,7 +8,7 @@ initalizeForm();
 
 function resetAllElements() {
     resetElements([columns,
-        order_by,
+        orderBy,
         limit,
         distinct,
     ]);
@@ -42,19 +42,19 @@ function tablesChange() {
 }
 
 function columnsChange() {
-    removeAllOptions(order_by);
-    prependEmptyOption(order_by);
+    removeAllOptions(orderBy);
+    prependEmptyOption(orderBy);
     var values = getSelectedValues(columns);
     for (var i in values) {
-        appendOption(order_by, values[i]+", Asc.", values[i]+" ASC");
-        appendOption(order_by,  values[i]+", Desc.", values[i]+" DESC");
+        appendOption(orderBy, values[i]+", Asc.", values[i]+" ASC");
+        appendOption(orderBy,  values[i]+", Desc.", values[i]+" DESC");
     }
     if (columns.selectedIndex == -1){
-        resetElements([order_by, limit, distinct]);
+        resetElements([orderBy, limit, distinct]);
     }else{
-        enableElements([order_by, limit, distinct]);
+        enableElements([orderBy, limit, distinct]);
     }
 }
 
-function order_byChange(){}
+function orderByChange(){}
 function limitChange(){}

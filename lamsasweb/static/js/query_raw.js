@@ -1,9 +1,9 @@
-var raw_query = document.querySelector("#raw_query");
+var rawQuery = document.querySelector("#raw_query");
 
 initalizeForm();
 
 function resetAllElements() {
-    resetElements([raw_query], disable = false);
+    resetElements([rawQuery], disable = false);
 }
 
 function addErrors() {

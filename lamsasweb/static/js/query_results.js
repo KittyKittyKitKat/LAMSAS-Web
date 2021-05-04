@@ -5,7 +5,7 @@ $(document).ready( function () {
 });
 
 if (map == true){
-  var mymap = L.map('mapid').setView([38, -97], 4);
+  var myMap = L.map('mapid').setView([38, -97], 4);
   var marker = null;
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -17,23 +17,23 @@ if (map == true){
   }).addTo(mymap);
 }
 
-function updateMap(lat, long, maplink) {
+function updateMap(lat, long, mapLink) {
   if (marker !== null) {
     marker.remove()
   }
-  mymap.setView([lat, long], 13);
+  myMap.setView([lat, long], 13);
   marker = L.marker([lat, long]);
-  marker.addTo(mymap);
+  marker.addTo(myMap);
   marker.bindPopup("Current Location:<br>"+lat+'°N, '+long+'°E').openPopup();
 }
 
 function toggleMapVisibility() {
-  var mapdiv = document.getElementById('mapid');
-  var hidemaptext = document.getElementById('hidemap');
-  mapdiv.hidden = !mapdiv.hidden;
-  if (mapdiv.hidden == true) {
-    hidemaptext.text = 'Show Map';
+  var mapDiv = document.getElementById('mapid');
+  var hideMapText = document.getElementById('hidemap');
+  mapDiv.hidden = !mapDiv.hidden;
+  if (mapDiv.hidden == true) {
+    hideMapText.text = 'Show Map';
   } else {
-    hidemaptext.text = 'Hide Map';
+    hideMapText.text = 'Hide Map';
   }
 }

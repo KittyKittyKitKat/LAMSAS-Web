@@ -82,14 +82,14 @@ function registerTooltips() {
     }
 }
 
-function makeRowAndCol(row_classes, col_classes) {
+function makeRowAndCol(rowClasses, colClasses) {
     var row = document.createElement('div');
     var col = document.createElement('div');
-    for (var i = 0; i<row_classes.length; i++){
-      row.classList.add(row_classes[i]);
+    for (var i = 0; i<rowClasses.length; i++){
+      row.classList.add(rowClasses[i]);
     }
-    for (var i = 0; i<col_classes.length; i++){
-      col.classList.add(col_classes[i]);
+    for (var i = 0; i<colClasses.length; i++){
+      col.classList.add(colClasses[i]);
     }
     row.appendChild(col);
     return [row, col];

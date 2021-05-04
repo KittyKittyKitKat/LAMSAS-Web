@@ -1,62 +1,62 @@
 var tables = document.querySelector("#tables"),
     columns = document.querySelector("#columns"),
-    order_by = document.querySelector("#order_by"),
-    nulls_last = document.querySelector("#nulls_last"),
+    orderBy = document.querySelector("#orderBy"),
+    nullsLast = document.querySelector("#nullsLast"),
     limit = document.querySelector("#limit"),
     offset = document.querySelector("#offset"),
     distinct = document.querySelector("#distinct"),
-    show_query = document.querySelector("#show_query"),
-    where_cols = document.querySelector("#where_left"),
-    where_op = document.querySelector("#where_operator"),
-    where_exp = document.querySelector("#where_right");
+    showQuery = document.querySelector("#showQuery"),
+    whereCols = document.querySelector("#where_left"),
+    whereOp = document.querySelector("#whereOperator"),
+    whereExp = document.querySelector("#where_right");
 
 initalizeForm();
 
 function newOrderFields() {
-  let order_by_height = document.getElementById('order_bys').offsetHeight;
+  let orderByHeight = document.getElementById('orderBys').offsetHeight;
   makeOrderByField();
   makeNullsLastField();
 }
 
 function makeOrderByField() {
-  let [new_row, new_col] = makeRowAndCol(['row'], ['col-md-12', 'mb-3']);
+  let [newRow, newCol] = makeRowAndCol(['row'], ['col-md-12', 'mb-3']);
 
-  let new_order_by = document.createElement('select');
-  new_order_by.classList.add('form-select');
-  new_order_by.classList.add('form-select-lg');
-  new_order_by.disabled = true;
-  prependEmptyOption(new_order_by);
+  let newOrderBy = document.createElement('select');
+  newOrderBy.classList.add('form-select');
+  newOrderBy.classList.add('form-select-lg');
+  newOrderBy.disabled = true;
+  prependEmptyOption(newOrderBy);
 
-  new_col.appendChild(new_order_by);
-  document.getElementById('order_bys').appendChild(new_row);
+  newCol.appendChild(newOrderBy);
+  document.getElementById('orderBys').appendChild(newRow);
 }
 
 function makeNullsLastField() {
-  let new_row_div = document.createElement('div');
-  new_row_div.classList.add('row');
+  let newRowDiv = document.createElement('div');
+  newRowDiv.classList.add('row');
 
-  let new_col_div = document.createElement('div');
-  new_col_div.classList.add('col-md-12');
-  new_col_div.classList.add('mb-3');
-  new_col_div.classList.add('mt-3');
+  let newColDiv = document.createElement('div');
+  newColDiv.classList.add('col-md-12');
+  newColDiv.classList.add('mb-3');
+  newColDiv.classList.add('mt-3');
 
-  let new_form_switch_div = document.createElement('div');
-  new_form_switch_div.classList.add('form-switch');
-  new_form_switch_div.classList.add('mb-3');
+  let newFormSwitchDiv = document.createElement('div');
+  newFormSwitchDiv.classList.add('form-switch');
+  newFormSwitchDiv.classList.add('mb-3');
 
-  let new_nulls_last = document.createElement('checkbox');
-  new_nulls_last.classList.add('form-check-input');
+  let newNullsLast = document.createElement('checkbox');
+  newNullsLast.classList.add('form-check-input');
 
-  new_form_switch_div.appendChild(new_nulls_last);
-  new_col_div.appendChild(new_form_switch_div);
-  new_row_div.appendChild(new_col_div);
-  document.getElementById('order_bys').appendChild(new_row_div);
+  newFormSwitchDiv.appendChild(newNullsLast);
+  newColDiv.appendChild(newFormSwitchDiv);
+  newRowDiv.appendChild(newColDiv);
+  document.getElementById('orderBys').appendChild(newRowDiv);
 }
 
 function resetWhereOp() {
-    where_op.disabled = true;
-    getSelectedOption(where_op).selected = false;
-    where_op.querySelector('option').selected = true;
+    whereOp.disabled = true;
+    getSelectedOption(whereOp).selected = false;
+    whereOp.querySelector('option').selected = true;
 }
 
 function addErrors() {
@@ -67,14 +67,14 @@ function addErrors() {
 
 function resetAllElements() {
     resetElements([columns,
-        order_by,
-        nulls_last,
+        orderBy,
+        nullsLast,
         limit,
         offset,
         distinct,
-        show_query,
-        where_cols,
-        where_exp
+        showQuery,
+        whereCols,
+        whereExp
     ]);
     resetWhereOp();
 }
@@ -82,7 +82,7 @@ function resetAllElements() {
 function initalizeForm() {
     resetAllElements();
     prependEmptyOption(tables);
-    prependEmptyOption(where_op);
+    prependEmptyOption(whereOp);
     for (let key in all_columns) {
         appendOption(tables, key, key);
     }
@@ -102,31 +102,31 @@ function tablesChange() {
 }
 
 function columnsChange() {
-    removeAllOptions(order_by);
-    removeAllOptions(where_cols);
-    prependEmptyOption(order_by);
-    prependEmptyOption(where_cols);
-    where_cols.required = false;
-    where_op.required = false;
-    where_exp.required = false;
+    removeAllOptions(orderBy);
+    removeAllOptions(whereCols);
+    prependEmptyOption(orderBy);
+    prependEmptyOption(whereCols);
+    whereCols.required = false;
+    whereOp.required = false;
+    whereExp.required = false;
     let values = getSelectedValues(columns);
     for (let i in values) {
-        appendOption(where_cols, values[i], values[i]);
-        appendOption(order_by, values[i]+", Asc.", values[i]+" ASC");
-        appendOption(order_by, values[i]+", Desc.", values[i]+" DESC");
+        appendOption(whereCols, values[i], values[i]);
+        appendOption(orderBy, values[i]+", Asc.", values[i]+" ASC");
+        appendOption(orderBy, values[i]+", Desc.", values[i]+" DESC");
     }
     if (columns.selectedIndex == -1){
-        resetElements([order_by, limit, offset, distinct, where_cols, where_exp, show_query]);
+        resetElements([orderBy, limit, offset, distinct, whereCols, whereExp, showQuery]);
     }else{
-        enableElements([order_by, limit, distinct, where_cols, show_query]);
+        enableElements([orderBy, limit, distinct, whereCols, showQuery]);
     }
 }
 
-function order_byChange() {
-    if (order_by.value) {
-        enableElements([nulls_last]);
+function orderByChange() {
+    if (orderBy.value) {
+        enableElements([nullsLast]);
     } else {
-        resetElements([nulls_last]);
+        resetElements([nullsLast]);
     }
 }
 
@@ -146,17 +146,17 @@ function offsetChange() {
     }
 }
 
-function where_colsChange() {
-     if (where_cols.value) {
-        enableElements([where_op, where_exp]);
-        where_cols.required = true;
-        where_op.required = true;
-        where_exp.required = true;
+function whereColsChange() {
+     if (whereCols.value) {
+        enableElements([whereOp, whereExp]);
+        whereCols.required = true;
+        whereOp.required = true;
+        whereExp.required = true;
     } else {
-        resetElements([where_exp]);
+        resetElements([whereExp]);
         resetWhereOp();
-        where_cols.required = false;
-        where_op.required = false;
-        where_exp.required = false;
+        whereCols.required = false;
+        whereOp.required = false;
+        whereExp.required = false;
     }
 }
