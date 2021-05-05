@@ -10,22 +10,23 @@ from lamsasweb.search.utils import (all_columns, generate_query, query_db,
                                     make_results_zip,
                                     query_args_from_form, get_args_from_query)
 
+Template = str
 search = Blueprint('search', __name__)
 
 
 @search.route('/')
 @search.route('/home')
-def home():
+def home() -> Template:
     return render_template('home.html', title='Home')
 
 
 @search.route('/help')
-def help():
+def help() -> Template:
     return render_template('help.html', title='Help')
 
 
 @search.route('/query-simple', methods=['GET', 'POST'])
-def query_simple():
+def query_simple() -> Template:
     form = DBSimpleQueryForm()
     if form.validate_on_submit():
         query_args = query_args_from_form(
@@ -36,7 +37,7 @@ def query_simple():
 
 
 @search.route('/query-advanced', methods=['GET', 'POST'])
-def query_advanced():
+def query_advanced() -> Template:
     form = DBAdvancedQueryForm()
     if form.validate_on_submit():
         query_args = query_args_from_form(
@@ -49,7 +50,7 @@ def query_advanced():
 
 
 @search.route('/query-raw', methods=['GET', 'POST'])
-def query_raw():
+def query_raw() -> Template:
     form = DBRawQueryForm()
     if form.validate_on_submit():
         try:
@@ -62,7 +63,7 @@ def query_raw():
 
 
 @search.route('/query-results')
-def query_results():
+def query_results() -> Template:
     query_args = ast.literal_eval(request.args.get('query_args'))
     show_query = request.args.get('show_query')
     query = generate_query(query_args)
@@ -73,7 +74,7 @@ def query_results():
 
 
 @search.route('/download-results')
-def download_results():
+def download_results() -> Template:
     query_args = ast.literal_eval(request.args.get('query_args'))
     query_results = query_db(generate_query(query_args))
     download_path = current_app.config['DOWNLOAD_PATH']

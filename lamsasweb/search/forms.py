@@ -2,7 +2,7 @@ import re
 from flask_wtf import FlaskForm
 from wtforms import (BooleanField, SelectMultipleField, SelectField,
                      IntegerField, SubmitField, StringField, TextAreaField,
-                     ValidationError)
+                     ValidationError, FormMeta, Field)
 from wtforms.widgets import TextInput
 from lamsasweb.search.utils import operator_table
 from wtforms.validators import DataRequired, Optional, NumberRange
@@ -45,7 +45,7 @@ class DBRawQueryForm(FlaskForm):
     raw_query = TextAreaField('SQLite Query', validators=[DataRequired()])
     submit = SubmitField('Query')
 
-    def validate_raw_query(form, field):
+    def validate_raw_query(form: FormMeta, field: Field) -> None:
         query = field.data
         semicolons = query.count(';')
         match = re.search(';+$', query)

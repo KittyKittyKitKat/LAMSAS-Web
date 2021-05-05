@@ -6,7 +6,8 @@ import re
 from collections import defaultdict
 from zipfile import ZipFile
 from flask import g
-# from functools import lru_cache
+from wtforms.form import FormMeta
+from sqlite3 import Connection
 
 all_columns = {
     'Informants': [
@@ -49,16 +50,16 @@ operator_table = {
 reversed_operator_table = {value: key for key, value in operator_table.items()}
 
 
-def query_args_from_form(form, ignore_fields):
+def query_args_from_form(form: FormMeta, ignore_fields: tuple) -> dict:
     return {fieldname: value for fieldname, value in form.data.items()
             if fieldname not in ignore_fields}
 
 
-def col_to_schema(col):
+def col_to_schema(col: str) -> str:
     return re.sub('[^0-9a-zA-Z]+', '_', col)
 
 
-def get_db():
+def get_db() -> Connection:
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect('file:LAMSAS.db?mode=ro', uri=True)
@@ -66,7 +67,7 @@ def get_db():
 
 
 # @lru_cache(maxsize=10)
-def generate_query(args_dict):
+def generate_query(args_dict: dict) -> str:
     args_dict = defaultdict(lambda: None, args_dict)
     distinct_clause = ' DISTINCT ' if args_dict['distinct'] else ' '
     cols = ', '.join([col_to_schema(col) for col in args_dict['columns']])
@@ -107,8 +108,7 @@ def generate_query(args_dict):
     return query
 
 
-# @lru_cache(maxsize=10)
-def get_args_from_query(raw_query):
+def get_args_from_query(raw_query: str) -> dict:
     query = raw_query.replace(', ', ',').replace(';', '')
     args_dict = {}
     for keyword in ['DISTINCT', 'NULLS LAST', 'NULLS FIRST']:
@@ -158,8 +158,7 @@ def get_args_from_query(raw_query):
     return args_dict
 
 
-# @lru_cache(maxsize=20)
-def query_db(query):
+def query_db(query: str) -> list[list[...]]:
     try:
         query = get_db().execute(query)
     except Exception as e:
@@ -169,13 +168,13 @@ def query_db(query):
         return result
 
 
-def get_downloads_folder(root_file):
+def get_downloads_folder(root_file: str) -> str:
     dirname = os.path.dirname(root_file)
     downloads_folder = os.path.join(dirname, 'static/')
     return downloads_folder
 
 
-def make_results_zip(downloads_path, args_dict, query_results):
+def make_results_zip(downloads_path: str, args_dict: dict, query_results: list[list[...]]) -> str:
     if args_dict is None or query_results is None:
         raise TypeError("Got 'NoneType', expected valid argument")
     now = datetime.datetime.now()
