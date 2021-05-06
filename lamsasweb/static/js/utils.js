@@ -50,17 +50,19 @@ function getSelectedValues(selectElement) {
 function resetElements(elemsList, disable = true) {
     for (var i=0; i<elemsList.length; i++) {
         var elem = elemsList[i];
-        if (disable == true){
-          elem.disabled = true;
+        if (elem !== null){}
+          if (disable == true){
+            elem.disabled = true;
+          }
+          if (elem.type.includes('text')) {
+              elem.value = '';
+          }
+          if (elem.type == 'checkbox') {
+              elem.checked = false;
+          }
+          if (elem.type.includes('select')) {
+              removeAllOptions(elem);
         }
-        if (elem.type.includes('text')) {
-            elem.value = '';
-        }
-        if (elem.type == 'checkbox') {
-            elem.checked = false;
-        }
-        if (elem.type.includes('select')) {
-            removeAllOptions(elem);
         }
     }
 }
