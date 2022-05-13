@@ -1,13 +1,13 @@
 var tables = document.querySelector("#tables"),
     columns = document.querySelector("#columns"),
-    orderBy = document.querySelector("#orderBy"),
-    nullsLast = document.querySelector("#nullsLast"),
+    orderBy = document.querySelector("#order_by"),
+    nullsLast = document.querySelector("#nulls_last"),
     limit = document.querySelector("#limit"),
     offset = document.querySelector("#offset"),
     distinct = document.querySelector("#distinct"),
-    showQuery = document.querySelector("#showQuery"),
+    showQuery = document.querySelector("#show_query"),
     whereCols = document.querySelector("#where_left"),
-    whereOp = document.querySelector("#whereOperator"),
+    whereOp = document.querySelector("#where_operator"),
     whereExp = document.querySelector("#where_right");
 
 initalizeForm();

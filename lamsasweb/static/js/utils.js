@@ -63,7 +63,6 @@ function resetElements(elemsList, disable = true) {
           if (elem.type.includes('select')) {
               removeAllOptions(elem);
         }
-        }
     }
 }
 

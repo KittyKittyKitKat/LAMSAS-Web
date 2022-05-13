@@ -1,6 +1,6 @@
 var tables = document.querySelector("#tables"),
     columns = document.querySelector("#columns"),
-    orderBy = document.querySelector("#orderBy"),
+    orderBy = document.querySelector("#order_by"),
     distinct = document.querySelector("#distinct"),
     limit = document.querySelector("#limit");
 
