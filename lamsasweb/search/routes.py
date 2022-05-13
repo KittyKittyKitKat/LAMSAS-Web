@@ -45,7 +45,7 @@ def query_advanced() -> Template:
         return redirect(url_for('search.query_results',
                                 show_query=form.data['show_query'],
                                 query_args=query_args))
-    return render_template('query_advanced2.html', form=form,
+    return render_template('query_advanced.html', form=form,
                            all_columns=all_columns, title='Query')
 
 
