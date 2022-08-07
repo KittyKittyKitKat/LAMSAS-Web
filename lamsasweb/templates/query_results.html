@@ -1,26 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
   {% set columns=query_args.get('columns') %}
-  {% set map = 'Latitude' in columns and 'Longitude' in columns %}
-  {% set col_width=(100/(columns|length)+(1 if map else 0))|round(2) %}
+  {% set col_width=(100/(columns|length))|round(2) %}
   {% set ns = namespace() %}
-  {% if map %}
-    {% for column in columns %}
-      {% if column == 'Latitude' %}
-        {% set ns.latindex = loop.index0 %}
-      {% elif column=='Longitude' %}
-        {% set ns.lonindex = loop.index0 %}
-      {% endif %}
-    {% endfor %}
-  {% endif %}
   <div class="container text-center mt-3">
     <h2 class="mb-3" align="center">Query Results:</h2>
     <a href="{{ url_for('search.download_results', query_args=query_args) }}"><button class="btn btn-secondary">Download Results</button></a>
-  </div>
-  <div class="container text-center mb-3">
-    {% if map %}
-      <br><a href="#mapid">Jump to Map</a>
-    {% endif %}
   </div>
   <div class="container-fluid" align="center">
     {% if show_query=='True' %}
@@ -33,9 +18,6 @@
             {% for column in columns %}
               <th width="{{ col_width }}">{{ column }}</th>
             {% endfor %}
-            {% if map %}
-              <th width="{{ col_width }}">Map</th>
-            {% endif %}
         </thead>
         <tbody>
           </tr>
@@ -44,13 +26,6 @@
               {% for item in result %}
                 <td>{{ item or 'Not Available*'}}</td>
               {% endfor %}
-              {% if map %}
-                <td width="{{ col_width }}">
-                  <a id="maplink{{ loop.index }}" onclick="updateMap({{ result[ns.latindex] }}, {{ result[ns.lonindex] }});" href='#mapid'>
-                    Map View
-                  </a>
-                </td>
-              {% endif %}
             </tr>
           {% endfor %}
         </tbody>
@@ -67,16 +42,11 @@
     <p><small>*A piece of data is "Not Available" if it is not present in the constructed database. Every possible measure has been taken to keep the integrity of the data, but some values will still be absent.</small></p>
     <p><a href="#navbar">Jump to Top</a><p>
   </div>
-  {% if map %}
-    <div>
-      <figure class="text-center">
-        <figcaption><a id="hidemap" onclick="toggleMapVisibility()">Hide Map</a></figcaption>
-        <div id="mapid"></div>
-      </figure>
-    </div>
-  {% endif %}
   <script type="text/javascript">
-    var map = {{ map|lower }};
+    $(document).ready( function () {
+        $('#results_table').DataTable({
+            ordering: false
+        });
+    });
   </script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/query_results.js') }}"></script>
 {% endblock content %}
