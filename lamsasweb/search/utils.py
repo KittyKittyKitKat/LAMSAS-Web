@@ -6,8 +6,6 @@ import re
 from collections import defaultdict
 from zipfile import ZipFile
 from flask import g
-from wtforms.form import FormMeta
-from sqlite3 import Connection
 
 all_columns = {
     'Informants': [
@@ -39,10 +37,10 @@ all_columns = {
 operator_table = {
     'Is Equal To': '=',
     'Is Not Equal To': '!=',
-    'Is Greater Than': '<',
-    'Is Less Than': '>',
-    'Is Greater Than or Equal To': '<=',
-    'Is Less Than or Equal To': '>=',
+    'Is Greater Than': '>',
+    'Is Less Than': '<',
+    'Is Greater Than or Equal To': '>=',
+    'Is Less Than or Equal To': '<=',
     'Contains Substring': 'LIKE',
     'Excludes Substring': 'NOT LIKE',
     'Matches Regex': 'GLOB'
@@ -50,28 +48,41 @@ operator_table = {
 reversed_operator_table = {value: key for key, value in operator_table.items()}
 
 
-def query_args_from_form(form: FormMeta, ignore_fields: tuple) -> dict:
-    return {fieldname: value for fieldname, value in form.data.items()
+def query_args_from_form(form, ignore_fields):
+    args_dict = {fieldname: value for fieldname, value in form.data.items()
             if fieldname not in ignore_fields}
+    cols2 = args_dict['columns2']
+    try:
+        cols2.remove('Informant')
+    except ValueError:
+        pass
+    columns = args_dict['columns1'] + cols2
+    args_dict['columns'] = columns
+    return args_dict
 
 
-def col_to_schema(col: str) -> str:
+def col_to_schema(col):
     return re.sub('[^0-9a-zA-Z]+', '_', col)
 
 
-def get_db() -> Connection:
+def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect('file:LAMSAS.db?mode=ro', uri=True)
     return db
 
 
-# @lru_cache(maxsize=10)
-def generate_query(args_dict: dict) -> str:
+def generate_query(args_dict):
     args_dict = defaultdict(lambda: None, args_dict)
     distinct_clause = ' DISTINCT ' if args_dict['distinct'] else ' '
     cols = ', '.join([col_to_schema(col) for col in args_dict['columns']])
-    table = args_dict['tables']
+    all_tables = args_dict['tables']
+    table = all_tables[-1]
+    join_tables = all_tables[:-1] if len(all_tables) > 1 else []
+    join_clause = ''
+    if join_tables:
+        for j_table in join_tables:
+            join_clause += f' INNER JOIN {j_table} USING(Informant)'
     ob = args_dict['order_by']
     if ob and ob.endswith(' DESC'):
         asc_desc = ' DESC'
@@ -94,6 +105,8 @@ def generate_query(args_dict: dict) -> str:
     offset_clause = ' OFFSET ' + \
         str(args_dict['offset']) if args_dict['offset'] else ''
     if args_dict['where_left']:
+        print(args_dict['where_operator'])
+        print(operator_table[args_dict['where_operator']])
         where_op = operator_table[args_dict['where_operator']]
         fixed_wf = col_to_schema(args_dict['where_left'])
         fixed_wr = f"'{args_dict['where_right']}'"
@@ -102,13 +115,13 @@ def generate_query(args_dict: dict) -> str:
         where_clause = f" WHERE {fixed_wf} {where_op} {fixed_wr}"
     else:
         where_clause = ''
-    query = 'SELECT' + distinct_clause + f'{cols} FROM {table}' + \
-        where_clause + order_by_clause + asc_desc + nulls_last_clause\
-        + limit_clause + offset_clause + ';'
+    query = ('SELECT' + distinct_clause + f'{cols} FROM {table}' +
+        join_clause + where_clause + order_by_clause + asc_desc +
+        nulls_last_clause + limit_clause + offset_clause + ';')
     return query
 
 
-def get_args_from_query(raw_query: str) -> dict:
+def get_args_from_query(raw_query):
     query = raw_query.replace(', ', ',').replace(';', '')
     args_dict = {}
     for keyword in ['DISTINCT', 'NULLS LAST', 'NULLS FIRST']:
@@ -158,7 +171,7 @@ def get_args_from_query(raw_query: str) -> dict:
     return args_dict
 
 
-def query_db(query: str) -> list[list[...]]:
+def query_db(query):
     try:
         query = get_db().execute(query)
     except Exception as e:
@@ -168,13 +181,13 @@ def query_db(query: str) -> list[list[...]]:
         return result
 
 
-def get_downloads_folder(root_file: str) -> str:
+def get_downloads_folder(root_file):
     dirname = os.path.dirname(root_file)
     downloads_folder = os.path.join(dirname, 'static/')
     return downloads_folder
 
 
-def make_results_zip(downloads_path: str, args_dict: dict, query_results: list[list[...]]) -> str:
+def make_results_zip(downloads_path, args_dict, query_results):
     if args_dict is None or query_results is None:
         raise TypeError("Got 'NoneType', expected valid argument")
     now = datetime.datetime.now()
