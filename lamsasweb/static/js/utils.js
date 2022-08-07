@@ -50,7 +50,7 @@ function getSelectedValues(selectElement) {
 function resetElements(elemsList, disable = true) {
     for (var i=0; i<elemsList.length; i++) {
         var elem = elemsList[i];
-        if (elem !== null){}
+        if (elem !== null){
           if (disable == true){
             elem.disabled = true;
           }
@@ -62,6 +62,7 @@ function resetElements(elemsList, disable = true) {
           }
           if (elem.type.includes('select')) {
               removeAllOptions(elem);
+          }
         }
     }
 }
