@@ -6,6 +6,7 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'change_this_later'
     app.config['DOWNLOAD_PATH'] = get_downloads_folder(__file__)
+    app.jinja_env.add_extension('jinja2.ext.do')
     from lamsasweb.search.routes import search
     from lamsasweb.errors.handlers import errors
     app.register_blueprint(search)
