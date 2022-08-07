@@ -1,135 +1,131 @@
-{% extends "layout.html" %}
-{% block content %}
-  <div class="container" align="center">
-    <form class="border border-dark rounded mt-3" action="" method="POST" style="width: 80%" novalidate>
-      {{ form.hidden_tag() }}
-      <fieldset>
-        <legend>Query the Database</legend>
-      	<div class="row">
-      		<div class="col-auto mx-auto mb-3">
-            {{ form.tables.label(class="form-label") }}
-            {{ form.tables(class="form-select form-select-lg", onchange="tablesChange()") }}
-            <div class="invalid-feedback">
-              {{ form.tables.errors[0]|safe }}
-            </div>
-      		</div>
-      	</div>
-      	<div class="row">
-      		<div class="col-auto mx-auto mb-3">
-      			<div class="row">
-      				<div class="col-md-12 mb-3">
-                {{ form.order_by.label(class="form-label") }}
-                {{ form.order_by(class="form-select form-select-lg", onchange="order_byChange()") }}
-                <div class="invalid-feedback">
-                  {{ form.order_by.errors[0]|safe }}
-                </div>
-      				</div>
-      			</div>
-      			<div class="row">
-      				<div class="col-md-12 mt-3 mb-3">
-                {{ form.nulls_last.label(class="form-check-label") }}
-                <div class="form-switch mb-3">
-                  {{ form.nulls_last(class="form-check-input") }}
-                </div>
-                <div class="invalid-feedback">
-                  {{ form.nulls_last.errors[0]|safe }}
-                </div>
-      				</div>
-      			</div>
-      			<div class="row">
-      				<div class="col-md-12 mb-3 mt-3">
-                {{ form.distinct.label(class="form-check-label") }}
-                <div class="form-switch mb-3">
-                  {{ form.distinct(class="form-check-input") }}
-                </div>
-                <div class="invalid-feedback">
-                  {{ form.distinct.errors[0]|safe }}
-                </div>
-      				</div>
-      			</div>
-      		</div>
-      		<div class="col-auto mx-auto mb-3">
-            {{ form.columns.label(class="form-label") }}
-            {{ form.columns(class="form-select form-select-lg", size=7, onchange="columnsChange()") }}
-            <div class="invalid-feedback">
-              {{ form.columns.errors[0]|safe }}
-            </div>
-      		</div>
-      		<div class="col-auto mx-auto mb-3">
-      			<div class="row">
-      				<div class="col-md-12 mb-3">
-                {{ form.limit.label(class="form-label") }}
-                {{ form.limit(class="form-control form-control-lg", onchange="limitChange()") }}
-                <div class="invalid-feedback">
-                  {{ form.limit.errors[0]|safe }}
-                </div>
-      				</div>
-      			</div>
-      			<div class="row">
-      				<div class="col-md-12 mb-3">
-                {{ form.offset.label(class="form-label") }}
-                {{ form.offset(class="form-control form-control-lg", onchange="offsetChange()") }}
-                <div class="invalid-feedback">
-                  {{ form.offset.errors[0]|safe }}
-                </div>
-      				</div>
-      			</div>
-      			<div class="row">
-      				<div class="col-md-12 mb-3">
-                {{ form.show_query.label(class="form-check-labell") }}
-                <div class="form-switch mb-3">
-                  {{ form.show_query(class="form-check-input") }}
-                </div>
-                <div class="invalid-feedback">
-                  {{ form.show_query.errors[0]|safe }}
-                </div>
-      				</div>
-      			</div>
-      		</div>
-      	</div>
-      	<div class="row">
-      		<div class="col-auto mx-auto mb-3">
-            {{ form.where_left.label(class="form-label") }}
-            {{ form.where_left(class="form-select form-select-lg", onchange="where_colsChange()") }}
-            <div class="invalid-feedback">
-              {{ form.where_left.errors[0]|safe }}
-            </div>
-      		</div>
-      		<div class="col-auto mx-auto mb-3">
-            {{ form.where_operator.label(class="form-label") }}
-            {{ form.where_operator(class="form-select form-select-lg") }}
-            <div class="invalid-feedback">
-              {{ form.where_operator.errors[0]|safe }}
-            </div>
-      		</div>
-      		<div class="col-auto mx-auto mb-3">
-            {{ form.where_right.label(class="form-label") }}
-            {{ form.where_right(class="form-control form-control-lg") }}
-            <div class="invalid-feedback">
-              {{ form.where_right.errors[0]|safe }}
-            </div>
-      		</div>
-      	</div>
-      </fieldset>
-      <div class="mb-3">
-        {{ form.submit(class="btn btn-lg btn-secondary") }}
+{% extends "query_simple.html" %}
+{% block more_fields %}
+  <div class="row">
+    {{ field_div_head(form.nulls_last) }}
+      {{ form.nulls_last.label(class="form-check-label fs-4") }}
+      <div class="form-switch">
+        {{ form.nulls_last(class="form-check-input fs-5", disabled=true, onchange="") }}
       </div>
-    </form>
-    <button class="btn btn-secondary mb-3 mt-3" align="center" onclick="sa_change()">Hide Advanced Query Options</button>
+    </div>
+    {{ field_div_head(form.offset) }}
+      {{ form.offset.label(class="form-label fs-4") }}
+      {{ form.offset(class="form-control form-control-lg", placeholder="Leave blank to begin at results start", onchange="") }}
+    </div>
+    {{ field_div_head(form.show_query) }}
+      {{ form.show_query.label(class="form-check-label fs-4") }}
+      <div class="form-switch">
+        {{ form.show_query(class="form-check-input fs-5") }}
+      </div>
+    </div>
   </div>
-  <div class="container text-center">
-    <p><small>Have a query in SQLite syntax from this site? Go to <a href="{{ url_for('search.query_raw') }}">this page</a> to query the database directly.</small></p>
-    <p>Visit the Help page for more information on each specific field.</p>
+  <div class="row">
+    {{ field_div_head(form.where_left) }}
+      {{ form.where_left.label(class="form-check-label fs-4") }}
+      {{ form.where_left(class="form-select form-select-lg", disabled=true, onchange="where_left_on_change()") }}
+    </div>
+    {{ field_div_head(form.where_operator) }}
+      {{ form.where_operator.label(class="form-check-label fs-4") }}
+      {{ form.where_operator(class="form-select form-select-lg", disabled=true) }}
+    </div>
+    {{ field_div_head(form.where_right) }}
+      {{ form.where_right.label(class="form-check-label fs-4") }}
+      {{ form.where_right(class="form-control form-control-lg", disabled=true) }}
+    </div>
   </div>
-  <script type="text/javascript">
-    var all_columns = {{ all_columns|tojson }}, errors = {{ form.errors|tojson }};
-    sa_change = () => window.location.replace("{{ url_for('search.query_simple') }}");
-  </script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/utils.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/query_advanced.js') }}"></script>
-  <style>
-    div.mx-auto {
-      width: 30%;
+{% endblock %}
+
+{% block travel_button %}
+  <button class="btn btn-secondary m-3 mt-3" style="text-align: center" onclick="sa_change()">Hide Advanced Query Options</button>
+{% endblock %}
+<script>
+{%- block travel_btn_js %}
+  sa_change = () => window.location.replace("{{ url_for('search.query_simple') }}");
+{%- endblock %}
+
+{%- block more_js_defs %}
+  const offset = document.getElementById("offset");
+  const nulls_last = document.getElementById("nulls_last");
+  const where_left = document.getElementById("where_left");
+  const where_operator = document.getElementById("where_operator");
+  const where_right = document.getElementById("where_right");
+{%- endblock %}
+
+{%- block more_js_fns%}
+
+  function order_by_on_change(){
+    nulls_last.checked = false;
+    if (order_by.selectedOptions[0].value === "")
+      nulls_last.disabled = true;
+    else
+      nulls_last.disabled = false;
+  }
+  function limit_on_change(){
+    offset.value = "";
+    if (limit.value === "")
+      offset.disabled = true;
+    else
+      offset.disabled = false;
+  }
+  function update_where_left(column_select){
+    column_options = [...column_select.options];
+    column_options_selected = [...column_select.selectedOptions];
+    column_options_unselected = column_options.filter(x => !column_options_selected.includes(x));
+    where_left_options = [...where_left.options];
+
+    for(var i=0; i<column_options_unselected.length; i++){
+      curr_col_opt = column_options_unselected[i];
+      for(var j=0; j<where_left_options.length; j++){
+        curr_ord_opt = where_left_options[j];
+        if (curr_ord_opt.value.includes(curr_col_opt.value))
+          curr_ord_opt.remove(curr_ord_opt.index);
+      }
     }
-  </style>
-{% endblock content %}
+
+    for(var i=0; i<column_options_selected.length; i++){
+      curr_col_opt = column_options_selected[i];
+      where_left_opt = column_options_selected[i].cloneNode(true);
+      where_left_opt.text = "Value of " + where_left_opt.text;
+
+      let found = false;
+      for(var j=0; j<where_left_options.length; j++){
+        curr_ord_opt = where_left_options[j];
+        if (curr_ord_opt.value.includes(curr_col_opt.value))
+          found = true;
+      }
+      if (!found)
+        where_left.add(where_left_opt);
+    }
+    if ([...where_left.options].length === 1)
+      where_left.disabled = true;
+    else
+      where_left.disabled = false;
+  }
+  function where_left_on_change(){
+    var empty_selected = where_left.selectedOptions[0].value === "";
+    if (empty_selected){
+      where_operator.options[0].hidden = false;
+      where_operator.selectedIndex = 0;
+      where_operator.disabled = true;
+      where_right.disabled = true;
+      where_operator.required = false;
+      where_right.required = false;
+    } else {
+      where_operator.selectedIndex = 1;
+      where_operator.options[0].hidden = true;
+      where_operator.disabled = false;
+      where_right.disabled = false;
+      where_operator.required = true;
+      where_right.required = true;
+    }
+  }
+
+{%- endblock %}
+
+{% block more_js_setup %}
+offset.disabled = offset.value === "";
+nulls_last.disabled = !nulls_last.checked;
+where_left.disabled = where_left.selectedOptions[0].value === "";
+where_operator.disabled = where_left.disabled;
+where_right.disabled = where_left.disabled;
+{% endblock %}
+</script>

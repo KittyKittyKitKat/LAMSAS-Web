@@ -1,72 +1,207 @@
 {% extends "layout.html" %}
+{% macro field_div_head(form_field) %}
+  {% if form_field.errors %}
+    <div class="col m-3 border rounded border-danger">
+  {% else %}
+    <div class="col m-3">
+  {% endif %}
+{%- endmacro %}
 {% block content %}
-  <div class="container" align="center">
-    <form class="border border-dark rounded mt-3" action="" method="POST" style="width: 80%" novalidate>
+{% set table_names = {"subform1": 1, "subform2": 2} %}
+  <div class="container" style="text-align: center">
+    <form class="border border-dark rounded mt-3" method="POST">
       {{ form.hidden_tag() }}
-      <fieldset>
-        <legend>Query the Database</legend>
-        <div class="row g-0">
-          <div class="col-auto mx-auto mb-3">
-            {{ form.tables.label(class="form-label") }}
-            {{ form.tables(class="form-select form-select-lg", onchange="tablesChange()") }}
-            <div class="invalid-feedback">
-              {{ form.tables.errors[0]|safe }}
+      <fieldset class="form-group">
+        <legend>
+          Query the Database
+        </legend>
+        <div class="row">
+          {{ field_div_head(form.tables) }}
+            {{ form.tables.label(class="form-label fs-4") }}
+            {% for table in form.tables %}
+              {% set outer_loop = loop %}
+              {% for key, value in table_names.items() %}
+                {% if value == outer_loop.index %}
+                  {% do table_names.update({key: table.label.text}) %}
+                {% endif %}
+              {% endfor %}
+              <div class="form-check">
+                {{ table(class="form-check-input fs-5", onchange="checkbox_toggle(this)") }}
+                {{ table.label(class="form-check-label fs-5") }}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="row">
+          {{ field_div_head(form.columns1) }}
+            {{ form.columns1.label(class="form-label fs-4") }}
+            {{ form.columns1(
+                class="form-select form-select-lg",
+                size=6,
+                under=table_names["subform1"],
+                onchange="column_on_change(this)"
+              ) }}
+          </div>
+         {{ field_div_head(form.columns2) }}
+            {{ form.columns2.label(class="form-label fs-4") }}
+            {{ form.columns2(
+                class="form-select form-select-lg",
+                size=6,
+                under=table_names["subform2"],
+                onchange="column_on_change(this)"
+              ) }}
+          </div>
+        </div>
+        <div class="row">
+          {{ field_div_head(form.order_by) }}
+            {{ form.order_by.label(class="form-label fs-4") }}
+            {{ form.order_by(class="form-select form-select-lg", disabled=true, onchange="order_by_on_change()") }}
+          </div>
+          {{ field_div_head(form.limit) }}
+            {{ form.limit.label(class="form-label fs-4") }}
+            {{ form.limit(class="form-control form-control-lg", placeholder="Leave blank for all results", onchange="limit_on_change()") }}
+          </div>
+          {{ field_div_head(form.distinct) }}
+            {{ form.distinct.label(class="form-check-label fs-4") }}
+            <div class="form-switch">
+              {{ form.distinct(class="form-check-input fs-5") }}
             </div>
           </div>
         </div>
-        <div class="row g-0">
-          <div class="col-auto mx-auto mb-3">
-            {{ form.order_by.label(class="form-label") }}
-            {{ form.order_by(class="form-select form-select-lg", onchange="order_byChange()") }}
-            <div class="invalid-feedback">
-              {{ form.order_by.errors[0]|safe }}
-            </div>
-          </div>
-          <div class="col-auto mx-auto mb-3">
-            {{ form.columns.label(class="form-label") }}
-            {{ form.columns(class="form-select form-select-lg", size=3, onchange="columnsChange()") }}
-            <div class="invalid-feedback">
-              {{ form.columns.errors[0]|safe }}
-            </div>
-          </div>
-          <div class="col-auto mx-auto mb-3">
-            {{ form.limit.label(class="form-label") }}
-            {{ form.limit(class="form-control form-control-lg", onchange="limitChange()") }}
-            <div class="invalid-feedback">
-              {{ form.limit.errors[0]|safe }}
-            </div>
-          </div>
-        </div>
-        <div class="row g-0">
-          <div class="col-auto mx-auto mb-3">
-            {{ form.distinct.label(class="form-check-label") }}
-            <div class="form-switch mb-3">
-              {{ form.distinct(class="form-check-input") }}
-            </div>
-            <div class="invalid-feedback">
-              {{ form.distinct.errors[0]|safe }}
-            </div>
-          </div>
-        </div>
+        {% block more_fields %}{% endblock %}
       </fieldset>
-      <div class="mb-3">
+      <div class="m-3">
         {{ form.submit(class="btn btn-lg btn-secondary") }}
       </div>
     </form>
-    <button class="btn btn-secondary mb-3 mt-3" align="center" onClick="sa_change()"> Show Advanced Query Options</button>
+    {% block travel_button %}
+      <button class="btn btn-secondary m-3 mt-3" style="text-align: center" onclick="sa_change()">Show Advanced Query Options</button>
+    {% endblock%}
   </div>
-  <div class="container text-center">
+  {# <div class="container text-center">
     <p>Visit the Help page for more information on each specific field.</p>
-  </div>
+  </div> #}
   <script type="text/javascript">
-    var all_columns = {{ all_columns|tojson }}, errors = {{ form.errors|tojson }};
+    {%- block travel_btn_js %}
     sa_change = () => window.location.replace("{{ url_for('search.query_advanced') }}");
-  </script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/utils.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/query_simple.js') }}"></script>
-  <style>
-    div.mx-auto {
-      width: 25%;
+    {%- endblock %}
+    const informant_checkbox = document.getElementById('tables-0');
+    const responses_checkbox = document.getElementById('tables-1');
+    const informant_columns = document.getElementById("columns1");
+    const responses_columns = document.getElementById("columns2");
+    const order_by = document.getElementById("order_by");
+    const primary_col = "Informant";
+    {% block more_js_defs %}
+    {% endblock %}
+
+    function sync_primary_col(column_select){
+      var column_select_elems = [...document.querySelectorAll('select[multiple]')].filter(
+        x => x.id.includes("columns") &&
+        !x.disabled &&
+        x !== column_select
+      );
+      var this_sel_opts = [...column_select.selectedOptions].map(x => x.value);
+      var set_to = this_sel_opts.includes(primary_col);
+      for(var i=0; i<column_select_elems.length; i++){
+        var curr_elem = column_select_elems[i];
+        var sel_opts = [...curr_elem.selectedOptions].map(x => x.value);
+        if (sel_opts.includes(primary_col) !== set_to) {
+          for(var j=0; j<curr_elem.options.length; j++){
+            var curr_opt = curr_elem.options[j];
+            if (curr_opt.value === primary_col) {
+              curr_opt.selected = set_to;
+              break;
+            }
+          }
+        }
+      }
     }
-  </style>
+
+    function checkbox_toggle(elem){
+      var column_select_elems = [...document.querySelectorAll('select[multiple]')];
+      var elems_under = column_select_elems.filter(x => x.attributes['under'].value === elem.value);
+      for(var i=0; i<elems_under.length; i++){
+        var elem_under = elems_under[i];
+        elem_under.disabled = !elem.checked;
+        if (elem_under.type === "select-multiple"){
+          elem_under.required = elem.checked;
+          if (elem_under.disabled)
+            elem_under.selectedIndex = -1;
+          update_order_by(elem_under);
+          for(var j=0; j<column_select_elems.length; j++){
+            var curr_sel = column_select_elems[j];
+            if (!elems_under.includes(curr_sel)){
+              sync_primary_col(curr_sel);
+              update_order_by(curr_sel);
+            }
+          }
+        }
+      }
+
+    }
+
+    function column_on_change(column_select){
+      sync_primary_col(column_select);
+      update_order_by(column_select);
+      update_where_left(column_select);
+    }
+
+    function update_order_by(column_select){
+      var column_options = [...column_select.options];
+      var column_options_selected = [...column_select.selectedOptions];
+      var column_options_unselected = column_options.filter(x => !column_options_selected.includes(x));
+      var order_by_options = [...order_by.options];
+
+      for(var i=0; i<column_options_unselected.length; i++){
+        var curr_col_opt = column_options_unselected[i];
+        for(var j=0; j<order_by_options.length; j++){
+          var curr_ord_opt = order_by_options[j];
+          if (curr_ord_opt.value.includes(curr_col_opt.value))
+            curr_ord_opt.remove(curr_ord_opt.index);
+        }
+      }
+
+      for(var i=0; i<column_options_selected.length; i++){
+        var curr_col_opt = column_options_selected[i];
+
+        var order_by_opt_asc = column_options_selected[i].cloneNode(true);
+        order_by_opt_asc.text += ", Asc.";
+        order_by_opt_asc.value += " ASC";
+        var order_by_opt_desc = column_options_selected[i].cloneNode(true);
+        order_by_opt_desc.text += ", Desc.";
+        order_by_opt_desc.value += " DESC";
+
+        var found = false;
+        for(var j=0; j<order_by_options.length; j++){
+          var curr_ord_opt = order_by_options[j];
+          if (curr_ord_opt.value.includes(curr_col_opt.value))
+            found = true;
+        }
+        if (!found) {
+          order_by.add(order_by_opt_asc);
+          order_by.add(order_by_opt_desc);
+        }
+      }
+      if ([...order_by.options].length === 1)
+        order_by.disabled = true;
+      else
+        order_by.disabled = false;
+      console.log(order_by.selectedIndex);
+    }
+    {%- block more_js_fns%}
+    function order_by_on_change(){}
+    function limit_on_change(){}
+    function update_where_left(){}
+    {%- endblock %}
+    informant_columns.disabled = !informant_checkbox.checked;
+    responses_columns.disabled = !responses_checkbox.checked;
+    if (informant_checkbox.checked)
+      update_order_by(informant_columns);
+      update_where_left(informant_columns);
+    if (responses_checkbox.checked)
+      update_order_by(responses_columns);
+      update_where_left(responses_columns);
+    {% block more_js_setup %}
+    {% endblock %}
+  </script>
 {% endblock content %}
